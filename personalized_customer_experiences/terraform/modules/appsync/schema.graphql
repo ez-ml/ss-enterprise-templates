@@ -1,0 +1,39 @@
+type Recommendation {
+    userId: String!
+    itemId: String!
+    score: Float!
+    category: String
+    timestamp: AWSTimestamp!
+}
+
+type RecommendationConnection {
+    items: [Recommendation!]!
+    nextToken: String
+}
+
+input RecommendationInput {
+    userId: String!
+    itemId: String!
+    score: Float!
+    category: String
+}
+
+type Query {
+    getRecommendations(userId: String!, limit: Int, nextToken: String): RecommendationConnection
+    getRecommendationsByCategory(category: String!, limit: Int, nextToken: String): RecommendationConnection
+}
+
+type Mutation {
+    putRecommendation(input: RecommendationInput!): Recommendation
+}
+
+type Subscription {
+    onRecommendationAdded(userId: String!): Recommendation
+        @aws_subscribe(mutations: ["putRecommendation"])
+}
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+} 
